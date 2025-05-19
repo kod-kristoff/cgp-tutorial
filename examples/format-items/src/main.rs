@@ -15,15 +15,20 @@ where
     }
 }
 
-fn format_items<C>(items: C) -> String
+pub trait CanFormatItems {
+    fn format_items(&self) -> String;
+}
+impl<Context> CanFormatItems for Context
 where
-    C: IntoIterator,
-    C::IntoIter: CanFormatIter,
+    for<'a> &'a Context: IntoIterator,
+    for<'a> <&'a Context as IntoIterator>::IntoIter: CanFormatIter,
 {
-    items.into_iter().format_iter()
+    fn format_items(&self) -> String {
+        self.into_iter().format_iter()
+    }
 }
 fn main() {
-    let res = format_items(&vec![1, 2, 3]);
+    let res = vec![1, 2, 3].format_items();
     println!("res = {res:?}");
     assert_eq!(res, "1, 2, 3");
 }
