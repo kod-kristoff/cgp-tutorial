@@ -27,8 +27,18 @@ where
         self.into_iter().format_iter()
     }
 }
+
 fn main() {
     let res = vec![1, 2, 3].format_items();
     println!("res = {res:?}");
     assert_eq!(res, "1, 2, 3");
+
+    assert_eq!(stringly_equals(&vec![1, 2, 3], &vec![1, 2, 4]), false);
+}
+
+fn stringly_equals<Context>(left: &Context, right: &Context) -> bool
+where
+    Context: CanFormatItems,
+{
+    left.format_items() == right.format_items()
 }
