@@ -1,18 +1,26 @@
-trait HasName {
+pub trait HasName {
     fn name(&self) -> &str;
 }
-fn greet<Context>(context: &Context)
+pub trait CanGreet {
+    fn greet(&self);
+}
+impl<Context> CanGreet for Context
 where
     Context: HasName,
 {
-    println!("Hello, {}!", context.name());
+    fn greet(&self)
+    where
+        Context: HasName,
+    {
+        println!("Hello, {}!", self.name());
+    }
 }
 
 fn main() {
     let steve = Person {
         name: "Steve".to_string(),
     };
-    greet(&steve);
+    steve.greet();
 }
 struct Person {
     name: String,
