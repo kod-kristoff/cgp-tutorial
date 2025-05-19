@@ -8,8 +8,17 @@ where
 {
     iter.join(", ")
 }
+
+fn format_items<C>(items: C) -> String
+where
+    C: IntoIterator,
+    C::IntoIter: Itertools,
+    <C::IntoIter as Iterator>::Item: Display,
+{
+    format_iter(items.into_iter())
+}
 fn main() {
-    let res = format_iter(vec![1, 2, 3].into_iter());
+    let res = format_items(&vec![1, 2, 3]);
     println!("res = {res:?}");
     assert_eq!(res, "1, 2, 3");
 }
