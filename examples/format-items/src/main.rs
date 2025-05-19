@@ -1,21 +1,26 @@
 use itertools::Itertools;
 use std::fmt::Display;
 
-fn format_iter<I>(mut iter: I) -> String
+pub trait CanFormatIter {
+    fn format_iter(self) -> String;
+}
+
+impl<I> CanFormatIter for I
 where
-    I: Iterator,
+    I: Itertools,
     I::Item: Display,
 {
-    iter.join(", ")
+    fn format_iter(mut self) -> String {
+        self.join(", ")
+    }
 }
 
 fn format_items<C>(items: C) -> String
 where
     C: IntoIterator,
-    C::IntoIter: Itertools,
-    <C::IntoIter as Iterator>::Item: Display,
+    C::IntoIter: CanFormatIter,
 {
-    format_iter(items.into_iter())
+    items.into_iter().format_iter()
 }
 fn main() {
     let res = format_items(&vec![1, 2, 3]);
