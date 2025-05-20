@@ -2,7 +2,7 @@
 resolver="3"
 members=[ "examples/format-items",
     "examples/greeter"
-]
+, "examples/string-formatter"]
 
 [workspace.dependencies]
 cgp = "0.4"
