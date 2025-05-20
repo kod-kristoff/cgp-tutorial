@@ -3,9 +3,22 @@ use std::fmt::{self, Display};
 use anyhow::Error;
 use impls::{FormatAsJson, FormatStringWithDebug, FormatStringWithDisplay};
 
+pub trait HasCgpProvider {
+    type CgpProvider;
+}
 /// Consumer
 pub trait CanFormatString {
     fn format_string(&self) -> Result<String, Error>;
+}
+
+impl<Context> CanFormatString for Context
+where
+    Context: HasCgpProvider,
+    Context::CgpProvider: StringFormatter<Context>,
+{
+    fn format_string(&self) -> Result<String, Error> {
+        Context::CgpProvider::format_string(self)
+    }
 }
 /// Provider
 pub trait StringFormatter<Context> {
@@ -62,6 +75,7 @@ fn main() {
     );
     println!("{}", FormatStringWithDebug::format_string(&person).unwrap());
     println!("{}", FormatAsJson::format_string(&person).unwrap());
+    println!("{}", person.format_string().unwrap());
 }
 
 #[derive(Debug, serde::Serialize)]
@@ -74,4 +88,8 @@ impl Display for Person {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{} {}", self.first_name, self.last_name)
     }
+}
+
+impl HasCgpProvider for Person {
+    type CgpProvider = FormatStringWithDisplay;
 }
